@@ -1,0 +1,102 @@
+#include <iostream>
+#include <string>
+#include <stack>
+
+using namespace std;
+
+
+int precedence (char op){
+    if(op == '+' || op == '-'){
+        return 1;
+    }
+    if(op == '*' || op == '/'){
+        return 2;
+    }
+    return 0;
+
+}
+
+
+string postfix(string s ){
+    stack <char> st;
+    string pf ="";
+    for(char ch : s){
+        if(ch >='0' && ch <='9'){
+            pf += ch;
+        }
+
+        else if( ch == '('){
+            st.push(ch);
+
+        }
+        else if(ch == ')'){
+            while(!st.empty() && st.top() != '('){
+                pf += st.top();
+                st.pop();
+            }
+            st.pop();
+        }
+        else{
+            while(!st.empty() && precedence(st.top()) >= precedence(ch)){
+                pf += st.top();
+                st.pop();
+            }
+            st.push(ch);
+        }
+        
+    }
+    while(!st.empty()){
+            pf += st.top();
+            st.pop();
+        }
+    return pf;
+}
+
+
+int evaluate(string s){
+
+    stack <int> st;
+
+    for(char ch : s){
+        if(ch >= '0' && ch <= '9'){
+            st.push(ch - '0');
+        }
+        else{
+             int b = st.top();
+             st.pop();
+             int a = st.top();
+             st.pop();
+
+
+             switch (ch){
+
+                 case '+' : st.push(a+b) ; break;
+                 case '-' : st.push(a-b) ; break ; 
+                 case '*' : st.push(a*b) ; break ;
+                 case '/' :
+                    if( b != 0){
+                         st.push(a/b) ;
+                    }else {
+                     cout<<"error"<<endl;
+                     return 0;
+                    } break;
+             }
+        }
+    }
+    return st.top();
+}
+
+int main(){
+    string s ;
+    cout<<"enter the infix part"<<endl;
+
+    cin>>s;
+
+    string pstfix = postfix(s) ;
+
+    cout<<"pst fix is : "<<pstfix<<endl;
+    cout<<" result : "<< evaluate(pstfix)<<endl;
+
+    return 0;
+
+}
